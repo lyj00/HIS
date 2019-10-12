@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="#" id = "formId2">
+	<div>
+		<img name="ttt" id="i1" alt="" 
+		 src="http://java21/group1/M00/00/00/wKiIgF2Jh2yAD90gAAAoty1yl-g092.png">
+	</div>
+	<input type="button" value="点击下载该图片" onclick="download()">
+</form>
+</body>
+<script type="text/javascript" src="Js/jquery-1.11.0.js"></script>
+<script type="text/javascript">
+	function download(){
+		var srcVal = $("#i1").attr("src");
+		alert(srcVal);
+		// var val = $("#i1").val();
+		if (confirm("确认操作?")) {
+			$.ajax({
+				url:"/hhh/downloadFastDFS.do",
+				type:"POST",
+				data:{"srcVal":srcVal},
+				success:function(data){
+					alert(data);
+					// window.location.href="ajaximg_fastDFS.html";
+				}
+			});
+	}
+	}
+	
+	
+	
+	
+	function doUpload(){
+		// 创建form表单对象
+		var formData = new FormData($("#formId")[0]);
+		// ajax发送请求 返回图片地址 赋值给img标签
+		$.ajax({
+			url:"/hhh/uploadFastDFS.do",
+			type:"POST",
+			data:formData,
+			async:false,
+			contentType:false,
+			processData:false,
+			success:function(data){
+				alert(data.obj);
+				$("#i1").attr("src",data.obj);
+			
+			}
+		
+		});
+	}
+</script>
+</html>

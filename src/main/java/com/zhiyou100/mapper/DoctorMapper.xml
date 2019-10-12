@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyou100.mapper.DoctorMapper">
+
+<sql id="doctor">
+		d.id id,
+		d.name name,
+		d.certificate_type certificate_type,
+		d.ID_num ID_num,
+		d.phone phone,
+		d.special_plane special_plane,
+		d.sex sex,
+		d.age age,
+		d.birther birther,
+		d.email email,
+		d.section_id section_id,
+		d.education education,
+		d.noted noted,
+		d.time time
+	</sql>
+	<sql id="section">
+		s.id sid,
+		s.seccp_num seccp_num,
+		s.secco_name secco_name
+	</sql>
+	<sql id="certificateType">
+		c.id cid,
+		c.name cname
+	</sql>
+
+<resultMap type="Doctor" id="DocSectionTypeResultMap">
+ 	<id column="id" property="id"/>
+ 	<result column="name" property="name"/>
+ 	<result column="certificate_type" property="certificate_type"/>
+ 	<result column="ID_num" property="ID_num"/>
+ 	<result column="phone" property="phone"/>
+ 	<result column="special_plane" property="special_plane"/>
+ 	<result column="sex" property="sex"/>
+ 	<result column="age" property="age"/>
+ 	<result column="birther" property="birther"/>
+ 	<result column="email" property="email"/>
+ 	<result column="section_id" property="section_id"/>
+ 	<result column="education" property="education"/>
+ 	<result column="noted" property="noted"/>
+ 	<result column="time" property="time"/>
+ 	<!-- 使用一对一映射标签 
+ 		property : 属性 . 写的是需要关联的映射的属性
+ 		javaType : 需要封装的另外一个类的类型
+ 					类路径(因为已经指定了别名)
+ 					上面 property里面的属性类型
+ 	-->
+ 	
+ 	<association property="section" javaType="Section">
+ 		<result column="secco_name" property="secco_name"/>
+ 	</association>
+ 	<association property="certificateType" javaType="CertificateType">
+ 		<result column="cname" property="name"/>
+ 	</association>
+ 	
+ </resultMap>
+ <!-- 一对一关联查询 -->
+ <select id="findAllDoctor" parameterType="map" resultMap="DocSectionTypeResultMap">
+	SELECT
+		<include refid="doctor"></include>,	
+		<include refid="section"></include>,	
+		<include refid="certificateType"></include>
+	FROM
+		doctor d,
+		section s,
+		certificate_type c
+		<where>
+			d.certificate_type = c.id and d.section_id = s.id
+		<if test="id != null and id != '' ">
+			and d.id like %${id}%
+		</if>
+		<if test="dname != null and dname != '' ">
+			and d.name like '%${dname}%'
+		</if>
+		<if test="section != null and section != '' ">
+			and s.secco_name like '%${section}%'
+		</if>
+		</where>
+ 	</select>
+ 	
+ 	<select id="count" parameterType="Map" resultType="int">
+ 	SELECT
+		count(*)
+		FROM
+		doctor d,
+		section s,
+		certificate_type c 		
+		<where>
+ 			<if test="id != null and id != '' ">
+				and d.id like '${id}'
+			</if>
+			<if test="dname != null and dname != '' ">
+				and d.name like '${dname}'
+			</if>
+			<if test="section != null and section != '' ">
+				and s.secco_name like '${section}'
+			</if>
+ 		</where>
+ 	</select>
+ 	<select id="findDoctorById" parameterType="int" resultType="Doctor">
+ 		select * from doctor where id = #{id}
+ 	</select>
+ 	<update id="updateDoctor" parameterType="Doctor">
+ 		update doctor set special_plane=#{special_plane},certificate_type=#{certificate_type},name=#{name},education=#{education},ID_num=#{ID_num},
+ 		phone=#{phone},sex=#{sex},email=#{email},birther=#{birther},
+ 		noted=#{noted},section_id=#{section_id},age=#{age},time=#{time} where id = #{id}
+ 	</update>
+ 	<insert id="insertDoctor" parameterType="Doctor">
+		INSERT INTO doctor (name,certificate_type,ID_num,phone,special_plane,sex,age,birther,email,section_id,education,noted,time)
+		VALUES (#{name},#{certificate_type},#{ID_num},#{phone},#{special_plane},#{sex},#{age},#{birther},#{email},#{section_id},#{education},#{noted},#{time})
+ 	</insert>  
+ 	
+ 	<delete id="deleteDoctorById" parameterType="int">
+ 		delete from doctor where id = #{id}
+ 	</delete>
+ 	<delete id="deleteList" parameterType="Integer[]">
+		delete from doctor 
+		<where>
+			<if test="ids.size > 0">
+				id in
+					<foreach collection="ids" item="id" open="(" separator="," close=")">
+						#{ids}
+					</foreach>
+			</if>
+		</where>
+		
+	</delete>
+ </mapper>

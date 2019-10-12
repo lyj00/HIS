@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyou100.mapper.RegMapper">
+
+<resultMap type="RegistrationInfor" id="regDoctorResultMap">
+ 	<id column="id" property="id"/>
+ 	<result column="age" property="age"/>
+ 	<result column="medical_record" property="medical_record"/>
+ 	<result column="name" property="name"/>
+ 	<result column="certificate_type"  property="certificate_type"/>
+ 	<result column="ID_num"  property="ID_num"/>
+ 	<result column="social_safe_num"  property="social_safe_num"/>
+ 	<result column="phone"  property="phone"/>
+ 	<result column="self_paying"  property="self_paying"/>
+ 	<result column="sex"  property="sex"/>
+ 	<result column="career"  property="career"/>
+ 	<result column="early_appointment"  property="early_appointment"/>
+ 	<result column="doctor_id"  property="doctor_id"/>
+ 	<result column="status"  property="status"/>
+ 	<result column="noted"  property="noted"/>
+ 	<result column="time"  property="time"/>
+ 	<result column="section_id" property="section_id"/>
+ 	<result column="age"  property="age"/>
+ 	<result column="registration_fee"  property="registration_fee"/>
+ 	<!-- 使用一对一映射标签 
+ 		property : 属性 . 写的是需要关联的映射的属性
+ 		javaType : 需要封装的另外一个类的类型
+ 					类路径(因为已经指定了别名)
+ 					上面 property里面的属性类型
+ 	-->
+ 	<association property="doctor" javaType="Doctor">
+ 	 	<!-- <id column="id" property="id"/>  -->
+ 		<result column="d_name" property="name"/>
+ 	</association>
+ 	<association property="section" javaType="Section">
+ 		<result column="secco_name" property="secco_name"/>
+ 	</association>
+ 	<association property="certificateType" javaType="CertificateType">
+ 		<result column="c_name" property="name"/>
+ 	</association>
+ 	
+ </resultMap>
+ <!-- 一对一关联查询 -->
+ <select id="findAllReg" parameterType="map" resultMap="regDoctorResultMap">
+	SELECT
+		r.id,
+		r.medical_record,
+		r.name,
+		r.certificate_type,
+		r.ID_num,
+		r.social_safe_num,
+		r.phone,
+		r.self_paying,
+		r.sex,
+		r.career,
+		r.early_appointment,
+		r.doctor_id,
+		d.name d_name,
+		r.status,
+		r.noted,
+		r.time,
+		r.section_id,
+		s.secco_name,
+		r.age,
+		r.registration_fee,
+		c.name c_name
+	FROM
+		registration_infor r,
+		doctor d,
+		section s,
+		certificate_type c
+		<where>
+			r.doctor_id = d.id and r.section_id = s.id and r.certificate_type = c.id
+			<if test="medicalRecord != null and medicalRecord != ''">
+				and r.medical_record like '%${medicalRecord}%'
+			</if>
+			<if test="doctorName != null and doctorName != ''">
+				and d.name like '%${doctorName}%'
+			</if>
+			<if test="section != null and section != ''">
+				and s.secco_name like '%${section}%'
+			</if>
+			<if test="startTime != null and startTime != '' ">
+				and r.time &gt; '${startTime}'
+			</if>
+			<if test="endTime != null and endTime != '' ">
+				and r.time &lt; '${endTime}'
+			</if>
+		</where>
+ 	</select>
+ 	
+ 	<select id="count" parameterType="Map" resultType="int">
+ 	SELECT
+		count(*)
+		FROM
+		registration_infor r,
+		doctor d,
+		section s,
+		certificate_type c 		
+		<where>
+ 			<if test="medicalRecord != null and medicalRecord != ''">
+				and r.medical_record like '%${medicalRecord}%'
+			</if>
+			<if test="doctorName != null and doctorName != ''">
+				and d.name like '%${doctorName}%'
+			</if>
+			<if test="section != null and section != ''">
+				and s.secco_name like '%${section}%'
+			</if>
+			<if test="startTime != null and startTime != '' ">
+				and r.time &gt; '${startTime}'
+			</if>
+			<if test="endTime != null and endTime != '' ">
+				and r.time &lt; '${endTime}'
+			</if>
+ 		</where>
+ 	</select>
+ 	
+ 	<resultMap type="RegistrationInfor" id="RDSC">
+ 	<id column="id" property="id"/>
+ 	<result column="age" property="age"/>
+ 	<result column="medical_record" property="medical_record"/>
+ 	<result column="name" property="name"/>
+ 	<result column="certificate_type"  property="certificate_type"/>
+ 	<result column="ID_num"  property="ID_num"/>
+ 	<result column="social_safe_num"  property="social_safe_num"/>
+ 	<result column="phone"  property="phone"/>
+ 	<result column="self_paying"  property="self_paying"/>
+ 	<result column="sex"  property="sex"/>
+ 	<result column="career"  property="career"/>
+ 	<result column="early_appointment"  property="early_appointment"/>
+ 	<result column="doctor_id"  property="doctor_id"/>
+ 	<result column="status"  property="status"/>
+ 	<result column="noted"  property="noted"/>
+ 	<result column="time"  property="time"/>
+ 	<result column="section_id" property="section_id"/>
+ 	<result column="age"  property="age"/>
+ 	<result column="registration_fee"  property="registration_fee"/>
+ 	<!-- 使用一对一映射标签 
+ 		property : 属性 . 写的是需要关联的映射的属性
+ 		javaType : 需要封装的另外一个类的类型
+ 					类路径(因为已经指定了别名)
+ 					上面 property里面的属性类型
+ 	-->
+ 	<association property="doctor" javaType="Doctor">
+ 	 	<!-- <id column="id" property="id"/>  -->
+ 		<result column="d_name" property="name"/>
+ 	</association>
+ 	<association property="section" javaType="Section">
+ 		<result column="secco_name" property="secco_name"/>
+ 	</association>
+ 	<association property="certificateType" javaType="CertificateType">
+ 		<result column="c_name" property="name"/>
+ 	</association>
+ 	
+ </resultMap>
+ 	<select id="findRegById" parameterType="int" resultMap="RDSC">
+		 SELECT
+			r.id,
+			r.medical_record,
+			r.NAME,
+			r.certificate_type,
+			r.ID_num,
+			r.social_safe_num,
+			r.phone,
+			r.self_paying,
+			r.sex,
+			r.career,
+			r.early_appointment,
+			r.doctor_id,
+			d. NAME d_name,
+			r. STATUS,
+			r.noted,
+			r.time,
+			r.section_id,
+			s.secco_name,
+			r.age,
+			r.registration_fee,
+			c. NAME c_name
+		FROM
+			registration_infor r,
+			doctor d,
+			section s,
+			certificate_type c
+		WHERE
+			r.doctor_id = d.id
+		AND r.section_id = s.id
+		AND r.certificate_type = c.id
+		AND r.id = #{id}
+ 	</select>
+ 	
+ 	<!-- <resultMap type="RegistrationInfor" id="sss">
+ 		<association property="section" javaType="Section">
+ 			<result column="secco_name" property="secco_name"/>
+ 		</association>
+ 	</resultMap> -->
+ 	
+ 	<select id="findSection" resultType="Section">
+ 		SELECT
+			*
+		FROM
+			section
+ 	</select>
+ 	<!-- updateReg -->
+ 	<update id="updateReg" parameterType="RegistrationInfor">
+ 		update registration_infor set medical_record=#{medical_record},certificate_type=#{certificate_type},name=#{name},status=#{status},ID_num=#{ID_num},
+ 		social_safe_num=#{social_safe_num},phone=#{phone},self_paying=#{self_paying},sex=#{sex},career=#{career},early_appointment=#{early_appointment},doctor_id=#{doctor_id},noted=#{noted},section_id=#{section_id},age=#{age},registration_fee=#{registration_fee},time=#{time} where id = #{id}
+ 	</update>
+ 	<insert id="insertReg" parameterType="RegistrationInfor">
+		INSERT INTO registration_infor (medical_record,certificate_type,NAME,STATUS,ID_num,social_safe_num,phone,self_paying,sex,career,early_appointment,doctor_id,noted,section_id,age,registration_fee,time) 
+		VALUES (#{medical_record},#{certificate_type},#{name},#{status},#{ID_num},#{social_safe_num},#{phone},#{self_paying},#{sex},#{career},#{early_appointment},#{doctor_id},#{noted},#{section_id},#{age},#{registration_fee},#{time})
+ 	</insert>  
+ 	
+ 	<delete id="deleteRegById" parameterType="int">
+ 		delete from registration_infor where id = #{id}
+ 	</delete>
+
+ </mapper>

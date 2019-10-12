@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyou100.mapper.ChargeMapper">
+
+<sql id="reg">
+		r.id rid,
+		r.medical_record,
+		r.name,
+		r.certificate_type,
+		r.ID_num,
+		r.social_safe_num,
+		r.phone,
+		r.self_paying,
+		r.sex,
+		r.career,
+		r.early_appointment,
+		r.doctor_id,
+		r.status,
+		r.noted,
+		r.time,
+		r.section_id,
+		r.age,
+		r.registration_fee
+	</sql>
+	<sql id="payItems">
+		p.id pid,
+		p.charge_item_name,
+		p.receivable_money
+	</sql>
+	<sql id="charge">
+		c.id,
+		c.medical_record,
+		c.pay_items_id,
+		c.charge_money,
+		c.charge_time
+	</sql>
+
+<resultMap type="ChargeManager" id="chargePayRegResultMap">
+ 	<id column="id" property="id"/>
+ 	<result column="medical_record" property="medical_record"/>
+ 	<result column="pay_items_id" property="pay_items_id"/>
+ 	<result column="charge_money" property="charge_money"/>
+ 	<result column="charge_time" property="charge_time"/>
+ 	
+ 	<association property="payItems" javaType="PayItems">
+ 	 	<id column="pid" property="id"/>
+ 		<result column="charge_item_name" property="charge_item_name"/>
+ 		<result column="receivable_money" property="receivable_money"/>
+ 	</association>
+ 	<association property="registrationInfor" javaType="RegistrationInfor">
+ 		<id column="rid" property="id"/>
+	 	<result column="age" property="age"/>
+	 	<result column="medical_record" property="medical_record"/>
+	 	<result column="name" property="name"/>
+	 	<result column="certificate_type"  property="certificate_type"/>
+	 	<result column="ID_num"  property="ID_num"/>
+	 	<result column="social_safe_num"  property="social_safe_num"/>
+	 	<result column="phone"  property="phone"/>
+	 	<result column="self_paying"  property="self_paying"/>
+	 	<result column="sex"  property="sex"/>
+	 	<result column="career"  property="career"/>
+	 	<result column="early_appointment"  property="early_appointment"/>
+	 	<result column="doctor_id"  property="doctor_id"/>
+	 	<result column="status"  property="status"/>
+	 	<result column="noted"  property="noted"/>
+	 	<result column="time"  property="time"/>
+	 	<result column="section_id" property="section_id"/>
+	 	<result column="age"  property="age"/>
+	 	<result column="registration_fee"  property="registration_fee"/>
+ 	</association>
+ 	
+ </resultMap>
+ <!-- 一对一关联查询 -->
+ <select id="findAllChargeManager" parameterType="map" resultMap="chargePayRegResultMap">
+	SELECT
+		<include refid="payItems"></include>,	
+		<include refid="charge"></include>,	
+		<include refid="reg"></include>
+	FROM
+		registration_infor r,
+		pay_items p,
+		charge_manager c
+		<where>
+			c.pay_items_id = p.id and c.medical_record = r.medical_record
+		<if test="medicalRecord != null and medicalRecord != '' ">
+			and c.medical_record like '%${medicalRecord}%'
+		</if>
+		<if test="name != null and name != '' ">
+			and r.name like '%${name}%'
+		</if>
+		</where>
+ 	</select>
+ 	
+ 	<select id="count" parameterType="Map" resultType="int">
+ 	SELECT
+		count(*)
+		FROM
+		registration_infor r,
+		pay_items p,
+		charge_manager c
+		<where>
+			c.pay_items_id = p.id and c.medical_record = r.medical_record
+		<if test="medicalRecord != null and medicalRecord != '' ">
+			and c.medical_record like '%${medicalRecord}%'
+		</if>
+		<if test="name != null and name != '' ">
+			and r.name like '%${name}%'
+		</if>
+		</where>
+ 	</select>
+ 	
+ <resultMap type="ChargeManager" id="CPR">
+ 	<id column="id" property="id"/>
+ 	<result column="medical_record" property="medical_record"/>
+ 	<result column="pay_items_id" property="pay_items_id"/>
+ 	<result column="charge_money" property="charge_money"/>
+ 	<result column="charge_time" property="charge_time"/>
+ 	
+ 	<association property="payItems" javaType="PayItems">
+ 	 	<id column="pid" property="id"/>
+ 		<result column="charge_item_name" property="charge_item_name"/>
+ 		<result column="receivable_money" property="receivable_money"/>
+ 	</association>
+ 	
+ 	<association property="registrationInfor" javaType="RegistrationInfor">
+ 		<id column="rid" property="id"/>
+	 	<result column="age" property="age"/>
+	 	<result column="medical_record" property="medical_record"/>
+	 	<result column="name" property="name"/>
+	 	<result column="certificate_type"  property="certificate_type"/>
+	 	<result column="ID_num"  property="ID_num"/>
+	 	<result column="social_safe_num"  property="social_safe_num"/>
+	 	<result column="phone"  property="phone"/>
+	 	<result column="self_paying"  property="self_paying"/>
+	 	<result column="sex"  property="sex"/>
+	 	<result column="career"  property="career"/>
+	 	<result column="early_appointment"  property="early_appointment"/>
+	 	<result column="doctor_id"  property="doctor_id"/>
+	 	<result column="status"  property="status"/>
+	 	<result column="noted"  property="noted"/>
+	 	<result column="time"  property="time"/>
+	 	<result column="section_id" property="section_id"/>
+	 	<result column="age"  property="age"/>
+	 	<result column="registration_fee"  property="registration_fee"/>
+	 </association>
+ 	
+ </resultMap>
+ <!-- 一对一关联查询 -->
+ <select id="findChargeManagerById" parameterType="map" resultMap="CPR">
+ 	SELECT
+		<include refid="payItems"></include>,	
+		<include refid="charge"></include>,	
+		<include refid="reg"></include>
+	FROM
+		registration_infor r,
+		pay_items p,
+		charge_manager c 
+		where 
+			c.pay_items_id = p.id and c.medical_record = r.medical_record and r.medical_record=#{medical_record}
+ 	</select>
+ 	<update id="updateChargeManager" parameterType="ChargeManager">
+ 		update charge_manager set id=#{id},pay_items_id=#{pay_items_id},charge_money=#{charge_money},charge_time=#{charge_time} where medical_record=#{medical_record}
+ 	</update>
+ 	<update id="updateReg" parameterType="ChargeManager">
+ 		update registration_infor set id = #{registrationInfor.id} ,name=#{registrationInfor.name},status=#{registrationInfor.status},ID_num=#{registrationInfor.ID_num},certificate_type=#{registrationInfor.certificate_type},
+ 		social_safe_num=#{registrationInfor.social_safe_num},phone=#{registrationInfor.phone},self_paying=#{registrationInfor.self_paying},sex=#{registrationInfor.sex},career=#{registrationInfor.career},early_appointment=#{registrationInfor.early_appointment},doctor_id=#{registrationInfor.doctor_id},noted=#{registrationInfor.noted},section_id=#{registrationInfor.section_id},age=#{registrationInfor.age},registration_fee=#{registrationInfor.registration_fee},time=#{registrationInfor.time} where medical_record=#{medical_record}
+ 	</update>
+ 	<insert id="insertChargeManager" parameterType="ChargeManager">
+		INSERT INTO charge_manager (medical_record,pay_items_id,charge_money,charge_time)
+		VALUES (#{medical_record},#{pay_items_id},#{charge_money},#{charge_time})
+ 	</insert> 
+ 	<insert id="insertReg" parameterType="ChargeManager">
+		INSERT INTO registration_infor (medical_record,certificate_type,NAME,STATUS,ID_num,social_safe_num,phone,self_paying,sex,career,early_appointment,doctor_id,noted,section_id,age,registration_fee,time) 
+		VALUES (#{medical_record},#{registrationInfor.certificate_type},#{registrationInfor.name},#{registrationInfor.status},#{registrationInfor.ID_num},#{registrationInfor.social_safe_num},#{registrationInfor.phone},#{registrationInfor.self_paying},#{registrationInfor.sex},#{registrationInfor.career},#{registrationInfor.early_appointment},#{registrationInfor.doctor_id},#{registrationInfor.noted},#{registrationInfor.section_id},#{registrationInfor.age},#{registrationInfor.registration_fee},#{registrationInfor.time})
+ 	</insert> 
+ 	
+ 	<delete id="deleteChargeManagerById" parameterType="int">
+ 		delete from charge_manager where id = #{id}
+ 	</delete>
+ 	<delete id="deleteList" parameterType="Integer[]">
+		delete from charge_manager 
+		<where>
+			<if test="ids.size > 0">
+				id in
+					<foreach collection="ids" item="id" open="(" separator="," close=")">
+						#{ids}
+					</foreach>
+			</if>
+		</where>
+		
+	</delete>
+ </mapper>

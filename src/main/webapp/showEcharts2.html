@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+
+<body>
+	<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+	<div id="main" style="width: 600px; height: 400px;"></div>
+
+
+</body>
+<script type="text/javascript" src="Js/jquery-1.11.0.js"></script>
+<script type="text/javascript" src="Js/echarts.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		
+		$.ajax({
+//			url : "${pageContext.request.contextPath}/showEcharts.do",
+			url : "/hhh/showEcharts2.do",
+			type : "get",
+			
+			success : function(data) { // 返回状态码
+				var myChart = echarts.init(document.getElementById('main'));
+				// 指定图表的配置项和数据
+				var option = {
+					title : {
+						text : 'ECharts 入门示例'
+					},
+					tooltip : {},
+					legend : {
+						data : [ '骨科','妇科','急诊科','外科' ]
+					},
+					xAxis : {
+						data : [ "周一", "周二", "周三", "周四", "周五", "周六", "周日" ]
+					},
+					yAxis : {},
+					series : [ {
+						name : '骨科',
+						type : 'line',
+						// stack: '总量'  --> 不写,会报错
+						data : data[0]
+					},
+					{
+						name : '妇科',
+						type : 'line',
+						// stack: '总量'  --> 不写,会报错
+						data : data[1]
+					},
+					{
+						name : '急诊科',
+						type : 'line',
+						// stack: '总量'  --> 不写,会报错
+						data : data[2]
+					},
+					{
+						name : '外科',
+						type : 'line',
+						// stack: '总量'  --> 不写,会报错
+						data : data[3]
+					}
+					
+					]
+				};
+				// 使用刚指定的配置项和数据显示图表。
+				myChart.setOption(option);
+			}
+			
+			
+
+
+		});
+	});
+		
+	
+	
+		
+		
+</script>
+</html>

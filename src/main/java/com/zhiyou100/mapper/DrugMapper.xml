@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyou100.mapper.DrugMapper">
+ 
+ 	<select id="findAllDrug" parameterType="map" resultType="Drug">
+		select * from drug
+		<where>
+			<if test="filed != null and keyword != null and keyword != '' ">
+				${filed} like '%${keyword}%'
+			</if>
+		</where>
+ 	</select>
+ 	
+ 	<select id="count" parameterType="Map" resultType="int">
+ 		select count(*) from drug
+ 		<where>
+ 			<if test="filed != null and keyword != null and keyword != '' ">
+				${filed} like '%${keyword}%'
+			</if>
+ 		</where>
+ 	</select>
+ 	
+ 	<select id="findDrugById" parameterType="int" resultType="Drug">
+ 		select * from drug where id = #{id}
+ 	</select>
+ 	
+ 	<update id="updateDrug" parameterType="Drug">
+ 		update drug set drug_num=#{drug_num},drug_url=#{drug_url},purchas_price=#{purchas_price},sale_price=#{sale_price},drug_name=#{drug_name},
+ 		drug_type=#{drug_type},simple_detail=#{simple_detail},prodeced_date=#{prodeced_date},expiration_date=#{expiration_date},quality_date=#{quality_date},detail=#{detail},
+ 		manufacture=#{manufacture},noted=#{noted},use_infor=#{use_infor},total_stock=#{total_stock},surplus=#{surplus},status=#{status} where id = #{id}
+ 	</update>
+ 	
+ 	<insert id="insertDrug" parameterType="Drug" >
+ 		INSERT INTO drug(
+				drug_num,
+				drug_url,
+				purchas_price,
+				sale_price,
+				drug_name,
+				drug_type,
+				simple_detail,
+				prodeced_date,
+				expiration_date,
+				quality_date,
+				detail,
+				manufacture,
+				use_infor,
+				total_stock,
+				surplus,
+				status,
+				noted) 
+			VALUES (
+			#{drug_num},
+			#{drug_url},
+			#{purchas_price},
+			#{sale_price},
+			#{drug_name},
+			#{drug_type},
+			#{simple_detail},
+			#{prodeced_date},
+			#{expiration_date},
+			#{quality_date},
+			#{detail},
+			#{manufacture},
+			#{use_infor},
+			#{total_stock},
+			#{surplus},
+			#{status},
+			#{noted})
+ 	</insert>
+ 	
+ 	<delete id="deletetDrugById" parameterType="int">
+ 		delete from drug where id = #{id}
+ 	</delete>
+ 	
+ 	<!-- 批量删除封面图 -->
+	<delete id="deleteList" parameterType="Integer[]">
+		delete from drug 
+		<where>
+			<if test="ids.size > 0">
+				id in
+					<foreach collection="ids" item="id" open="(" separator="," close=")">
+						#{ids}
+					</foreach>
+			</if>
+		</where>
+		
+	</delete>
+ 	
+</mapper>

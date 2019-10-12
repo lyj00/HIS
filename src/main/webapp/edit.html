@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="#" id = "formId2">
+	<div>
+		<input type="button" value="更新" onclick="doEdit()">
+		<img name="ttt" id="i1" alt="" 
+		 src="http://java21/group1/M00/00/00/wKiIgF2JhpGAEpclAAAoIYyOCm0364.jpg">
+	</div>
+</form>
+</body>
+<script type="text/javascript" src="Js/jquery-1.11.0.js"></script>
+<script type="text/javascript">
+	function doEdit(){
+		// var formData = new FormData($("#formId2")[0]);
+		var srcVal = $("#i1").attr("src");
+		alert(srcVal);
+		// var val = $("#i1").val();
+		if (confirm("确认操作?")) {
+			$.ajax({
+				url:"/hhh/deleteFastDFS.do",
+				type:"POST",
+				data:{"srcVal":srcVal},
+				success:function(msg){
+					alert("成功");
+					window.location.href="ajaximg_fastDFS.html";
+				}
+			});
+	}
+	}
+</script>
+</html>

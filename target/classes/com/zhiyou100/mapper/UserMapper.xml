@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyou100.mapper.UserMapper">
+
+	
+	
+	<sql id="user">
+		u.id id,
+		u.user_name user_name,
+		u.password password,
+		u.update_time update_time,
+		u.status status,
+		u.real_name real_name,
+		u.email email
+	</sql>
+	<sql id="user_role">
+		ur.id urid,
+		ur.user_id user_id,
+		ur.role_id role_id
+	</sql>
+	<sql id="role">
+		r.id rid,
+		r.role_num role_num,
+		r.role_name role_name,
+		r.statuss statuss
+	</sql>
+	<sql id="role_permission">
+		rp.id rpid,
+		rp.role_id roleId,
+		rp.permission_id permission_id
+	</sql>
+	<sql id="permission">
+		p.id pid,
+		p.resource_name resource_name,
+		p.resource_url resource_url,
+		p.super_resource_id super_resource_id,
+		p.status pstatus
+	</sql>
+	<resultMap type="user" id="URP">
+	 	<id column="id" property="id"/>
+	 	<result column="user_name" property="user_name"/>
+	 	<result column="password" property="password"/>
+	 	<result column="update_time" property="update_time"/>
+	 	<result column="status" property="status"/>
+	 	<result column="real_name" property="real_name"/>
+	 	<result column="email" property="email"/>
+ 	<association property="role" javaType="Role">
+ 	 	<id column="rid" property="id"/>
+ 		<result column="role_num" property="role_num"/>
+ 		<result column="role_name" property="role_name"/>
+ 		<result column="statuss" property="statuss"/>
+ 	</association>
+ 	<association property="permission" javaType="Permission">
+ 	 	<id column="pid" property="id"/>
+ 		<result column="resource_name" property="resource_name"/>
+ 		<result column="resource_url" property="resource_url"/>
+ 		<result column="super_resource_id" property="super_resource_id"/>
+ 		<result column="pstatus" property="status"/>
+ 	</association>
+ 	<!-- <collection property="listPermission" ofType="Permission">
+ 		<id column="pid" property="id"/>
+ 		<result column="resource_name" property="resource_name"/>
+ 		<result column="resource_url" property="resource_url"/>
+ 		<result column="super_resource_id" property="super_resource_id"/>
+ 		<result column="pstatus" property="status"/>
+ 	</collection> -->
+ 	
+ </resultMap>
+ 	<select id="findAllUser" parameterType="map" resultMap="URP">
+		select 
+		<include refid="user"></include>	
+		<!-- <include refid="user_role"></include>,	
+		<include refid="role"></include>,
+		<include refid="permission"></include>,
+		<include refid="role_permission"></include> -->
+		from 
+		user u
+		<!-- ,user_role ur,role r,permission p,role_permission rp -->
+		<where>
+			<!-- ur.user_id = u.id and ur.role_id = r.id and rp.role_id = r.id and rp.permission_id = p.id --> 
+			<if test="filed != null and keyword != null and keyword != '' ">
+				and	u.${filed} like '%${keyword}%'
+			</if>
+		</where>
+ 	</select>
+ 	
+ 	<select id="count" parameterType="Map" resultType="int">
+ 		select count(*) from user
+ 		<where>
+ 			<if test="filed != null and keyword != null and keyword != '' ">
+				${filed} like '%${keyword}%'
+			</if>
+ 		</where>
+ 	</select>
+ 	
+ 	<select id="findUserById" parameterType="int" resultType="user">
+ 		select * from user where id = #{id}
+ 	</select>
+ 	
+ 	<update id="updateUser" parameterType="user">
+ 		update user set user_name=#{user_name},password=#{password},update_time=#{update_time},status=#{status},real_name=#{real_name},email=#{email} where id = #{id}
+ 	</update>
+ 	
+ 	<insert id="insertUser" parameterType="user">
+ 		insert into user (user_name,password,update_time,status,real_name,email) values(#{user_name},#{password},#{update_time},#{status},#{real_name},#{email})
+ 	</insert>
+ 	
+ 	<delete id="deletetUserById" parameterType="int">
+ 		delete from user where id = #{id}
+ 	</delete>
+ 	<delete id="deleteList" parameterType="Integer[]">
+		delete from user 
+		<where>
+			<if test="ids.size > 0">
+				id in
+					<foreach collection="ids" item="id" open="(" separator="," close=")">
+						#{ids}
+					</foreach>
+			</if>
+		</where>
+		
+	</delete>
+ 	
+</mapper>

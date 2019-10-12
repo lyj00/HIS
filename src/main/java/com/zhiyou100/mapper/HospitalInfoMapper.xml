@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyou100.mapper.HospitalInfoMapper">
+
+<sql id="hospitalInfor">
+	h.id id,
+	h.medical_record medical_record,
+	h.caregiver caregiver,
+	h.bed_id bed_id,
+	h.pay_the_deposit pay_the_deposit,
+	h.state_illness state_illness,
+	h.doctor_id doctor_id,
+	h.section_id section_id,
+	h.time time
+</sql>
+
+<sql id="doctor">
+	d.id d_id,
+	d.name d_name,
+	d.certificate_type d_certificate_type,
+	d.ID_num d_ID_num,
+	d.phone d_phone,
+	d.special_plane d_special_plane,
+	d.sex d_sex,
+	d.age d_age,
+	d.birther d_birther,
+	d.email d_email,
+	d.section_id d_section_id,
+	d.education d_education,
+	d.noted d_noted,
+	d.time d_time
+</sql>
+
+<sql id="section">
+	s.id s_id,
+	s.seccp_num seccp_num,
+	s.secco_name secco_name
+</sql>
+
+<resultMap type="HospitalInfor" id="HospitalDocSectionResultMap">
+ 	<id column="id" property="id"/>
+ 	<result column="medical_record" property="medical_record"/>
+ 	<result column="caregiver" property="caregiver"/>
+ 	<result column="bed_id"  property="bed_id"/>
+ 	<result column="pay_the_deposit"  property="pay_the_deposit"/>
+ 	<result column="doctor_id"  property="doctor_id"/>
+ 	<result column="state_illness"  property="state_illness"/>
+ 	<result column="time"  property="time"/>
+ 	<result column="section_id" property="section_id"/>
+ 	<!-- 使用一对一映射标签 
+ 		property : 属性 . 写的是需要关联的映射的属性
+ 		javaType : 需要封装的另外一个类的类型
+ 					类路径(因为已经指定了别名)
+ 					上面 property里面的属性类型
+ 	-->
+ 	<association property="doctor" javaType="Doctor">
+ 	 	<id column="d_id" property="id"/>
+ 		<result column="d_name" property="name"/>
+ 	</association>
+ 	<association property="section" javaType="Section">
+ 		<result column="secco_name" property="secco_name"/>
+ 	</association>
+ </resultMap>
+
+<select id="findAllHospitalInfor" parameterType="map" resultMap="HospitalDocSectionResultMap">
+	SELECT
+		<include refid="hospitalInfor"></include>,
+		<include refid="doctor"></include>,	
+		<include refid="section"></include>	
+	FROM
+		doctor d,
+		section s,
+		hospital_infor h
+		<where>
+			h.doctor_id = d.id and h.section_id = s.id
+			<if test="medicalRecord != null and medicalRecord != '' ">
+				and h.medical_record like  '%${medicalRecord}%'
+			</if>
+			<if test="doctor != null and doctor != '' ">
+				and d.name like '%${doctor}%'
+			</if>
+			<if test="section != null and section != '' ">
+				and s.secco_name like '%${section}%'
+			</if>
+			<if test="startTime != null and startTime != '' ">
+				and h.time &gt; '%${startTime}%'
+			</if>
+			<if test="endTime != null and endTime != '' ">
+				and h.time &lt; '%${endTime}%'
+			</if>
+		</where>
+ 	</select>
+
+	<select id="count" parameterType="Map" resultType="int">
+ 	SELECT
+		count(*)
+		FROM
+		hospital_infor h,
+		doctor d,
+		section s
+		<where>
+			h.doctor_id = d.id and h.section_id = s.id
+			<if test="medicalRecord != null and medicalRecord != '' ">
+				and h.medical_record like '${medicalRecord}'
+			</if>
+			<if test="doctor != null and doctor != '' ">
+				and d.name like '${doctor}'
+			</if>
+			<if test="section != null and section != '' ">
+				and s.secco_name like '${section}'
+			</if>
+			<if test="startTime != null and startTime != '' ">
+				and h.time &gt; '${startTime}'
+			</if>
+			<if test="endTime != null and endTime != '' ">
+				and h.time &lt; '${endTime}'
+			</if>
+		</where>
+ 	</select>
+
+	<insert id="insertHospitalInfor" parameterType="HospitalInfor">
+		insert into hospital_infor (medical_record,caregiver,bed_id,pay_the_deposit,state_illness,time,section_id,doctor_id)  
+		values (#{medical_record},#{caregiver},#{bed_id},#{pay_the_deposit},#{state_illness},#{time},#{section_id},#{doctor_id})
+			
+	</insert>
+
+
+
+
+	<select id="findHospitalInforById" parameterType="int" resultType="HospitalInfor">
+	 		select * from hospital_infor where id = #{id}
+	</select>
+
+	<update id="updateHospitalInfor" parameterType="HospitalInfor">
+ 		update hospital_infor set medical_record=#{medical_record},caregiver=#{caregiver},bed_id=#{bed_id},pay_the_deposit=#{pay_the_deposit},state_illness=#{state_illness},time=#{time},doctor_id=#{doctor_id},section_id=#{section_id} where id = #{id}
+ 	</update>
+
+
+
+<delete id="deletetHospitalInforById" parameterType="int">
+	delete from hospital_infor where id = #{id}
+</delete>
+<!-- 批量删除封面图 -->
+	<delete id="deleteList" parameterType="Integer[]">
+		delete from hospital_infor 
+		<where>
+			<if test="ids.size > 0">
+				id in
+					<foreach collection="ids" item="id" open="(" separator="," close=")">
+						#{check}
+					</foreach>
+			</if>
+		</where>
+		
+	</delete>
+
+
+
+</mapper>
